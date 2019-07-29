@@ -135,5 +135,13 @@ bool Fsdb::obtain(std::string_view key, unsigned char **out_buffer) {
 
 bool Fsdb::del(std::string_view key) {
 	auto key_path = get_db_record_path(key);
-	return std::filesystem::remove(key_path);
+	auto failed = ! std::filesystem::remove(key_path);
+	if(failed) return failed;
+	if(!std::filesystem::is_directory(key_path.parent_path())) return false;
+	try {
+		return std::filesystem::remove(key_path.parent_path());
+	}
+	catch(std::filesystem::filesystem_error &er) {
+		return false;
+	}
 }

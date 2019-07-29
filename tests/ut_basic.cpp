@@ -141,3 +141,36 @@ TEST(FsdbDel, DelRemovesValue) {
 	EXPECT_FALSE(fsdb.obtain(key, &buffer));
 	delete[] buffer;
 }
+
+TEST(FsdbDel, DelRemovesEmptyDirectories) {
+	Fsdb fsdb;
+	fsdb.init();
+	const std::string key = "blah key";
+	const std::string value = "blah value";
+	auto db_rec_dir_path = fsdb.get_db_record_path(key).parent_path();
+	EXPECT_FALSE(std::filesystem::exists(db_rec_dir_path));
+	fsdb.insert(key, value.c_str(), value.length());
+	EXPECT_TRUE(std::filesystem::exists(db_rec_dir_path));
+	fsdb.del(key);
+	EXPECT_FALSE(std::filesystem::exists(db_rec_dir_path));
+}
+
+TEST(FsdbDel, DelNotRemovesNotEmptyDirectories) {
+	Fsdb fsdb;
+	fsdb.init();
+	const std::string key1 = "blah key1";
+	const std::string key2 = "blah key2";
+	const std::string value = "blah value";
+	unsigned char *buffer = nullptr;
+	auto db_rec_path1 = fsdb.get_db_record_path(key1).parent_path();
+	auto db_rec_path2 = fsdb.get_db_record_path(key2).parent_path();
+	EXPECT_EQ(db_rec_path1, db_rec_path2);
+	EXPECT_FALSE(std::filesystem::exists(db_rec_path1));
+	fsdb.insert(key1, value.c_str(), value.length());
+	fsdb.insert(key2, value.c_str(), value.length());
+	EXPECT_TRUE(std::filesystem::exists(db_rec_path1));
+	fsdb.del(key1);
+	EXPECT_TRUE(std::filesystem::exists(db_rec_path1));
+	fsdb.del(key2);
+	EXPECT_FALSE(std::filesystem::exists(db_rec_path2));
+}
