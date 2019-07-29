@@ -37,6 +37,7 @@ endif()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
 set(BUILD_TESTS OFF CACHE BOOL "Build unit tests")
+set(BUILD_BENCHMARKS OFF CACHE BOOL "Build benchmarks")
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/dist/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/dist/lib)
@@ -92,6 +93,33 @@ if(BUILD_TESTS)
 	target_link_libraries(run_all_tests fsdb gtest_main gmock_main)
 	enable_testing()
 	add_test(NAME unit_tests COMMAND run_all_tests)
+endif()
+
+if(BUILD_BENCHMARKS)
+	configure_file(CMakeLists.txt.benchmark.in googlebenchmark-download/CMakeLists.txt)
+	execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
+			RESULT_VARIABLE result
+			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googlebenchmark-download)
+	if(result)
+		message(FATAL_ERROR "CMake step for google benchmark failed: ${result}")
+	endif()
+	execute_process(COMMAND ${CMAKE_COMMAND} --build .
+			RESULT_VARIABLE result
+			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googlebenchmark-download)
+	if(result)
+		message(FATAL_ERROR "Build step for google benchmark failed: ${result}")
+	endif()
+
+	add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googlebenchmark-src
+			${CMAKE_CURRENT_BINARY_DIR}/googlebenchmark-build
+			EXCLUDE_FROM_ALL)
+
+	include_directories("${benchmark_SOURCE_DIR}/include")
+	add_executable(run_benchmarks
+			benchmarks/main.cpp
+			)
+	set_target_properties(run_benchmarks PROPERTIES CXX_STANDARD 17)
+	target_link_libraries(run_benchmarks fsdb benchmark)
 endif()
 
 install(TARGETS fsdb
