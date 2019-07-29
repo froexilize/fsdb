@@ -97,7 +97,7 @@ endif()
 
 if(BUILD_BENCHMARKS)
 	configure_file(CMakeLists.txt.benchmark.in googlebenchmark-download/CMakeLists.txt)
-	execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
+	execute_process(COMMAND ${CMAKE_COMMAND} -DCMAKE_BUILD_TYPE=Release -G "${CMAKE_GENERATOR}" .
 			RESULT_VARIABLE result
 			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googlebenchmark-download)
 	if(result)

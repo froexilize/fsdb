@@ -8,10 +8,13 @@ static void BM_random_insertion(benchmark::State &state) {
 		unsigned char buffer[state.range(0)];
 		auto start = std::chrono::high_resolution_clock::now();
 		fsdb.insert("VO_random", (const char *) buffer, state.range(0));
-		auto end = std::chrono::high_resolution_clock::now();
-		auto elapsed_seconds = std::chrono::duration_cast<std::chrono::duration<double> >(end-start);
-		state.SetIterationTime(elapsed_seconds.count());
+		auto mid = std::chrono::high_resolution_clock::now();
 		fsdb.del("VO_random");
+		auto end = std::chrono::high_resolution_clock::now();
+
+		auto elapsed_insert = std::chrono::duration_cast<std::chrono::duration<double> >(mid - start);
+		auto elapsed_del = std::chrono::duration_cast<std::chrono::duration<double> >(end - mid);
+		state.SetIterationTime(elapsed_insert.count());
 	}
 }
 BENCHMARK(BM_random_insertion)
