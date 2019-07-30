@@ -98,11 +98,13 @@ if(BUILD_TESTS)
 	enable_testing()
 	add_test(NAME unit_tests COMMAND run_all_tests)
 	set(COVERAGE_GCOVR_EXCLUDES "googletest-src/*")
-	SETUP_TARGET_FOR_COVERAGE_GCOVR_HTML(
-			NAME unit_tests_coverage
-			EXECUTABLE run_all_tests
-			DEPENDENCIES fsdb run_all_tests
-	)
+	if(CMAKE_COMPILER_IS_GNUCXX)
+		SETUP_TARGET_FOR_COVERAGE_GCOVR_HTML(
+				NAME unit_tests_coverage
+				EXECUTABLE run_all_tests
+				DEPENDENCIES fsdb run_all_tests
+		)
+	endif()
 endif()
 
 if(BUILD_BENCHMARKS)
