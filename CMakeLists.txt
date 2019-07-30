@@ -43,6 +43,11 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/dist/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/dist/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/dist/bin)
 
+if(BUILD_TESTS)
+	include(CodeCoverage)
+	APPEND_COVERAGE_COMPILER_FLAGS()
+endif()
+
 set(FSDB_SOURCES
 		src/fsdb.cpp
 		)
@@ -50,7 +55,6 @@ set(FSDB_SOURCES
 set(FSDB_HEADERS
 		include/fsdb/fsdb.hpp
 		)
-
 
 add_library(fsdb STATIC ${FSDB_SOURCES} ${FSDB_HEADERS})
 target_compile_features(fsdb PUBLIC cxx_std_17)
@@ -93,6 +97,12 @@ if(BUILD_TESTS)
 	target_link_libraries(run_all_tests fsdb gtest_main gmock_main)
 	enable_testing()
 	add_test(NAME unit_tests COMMAND run_all_tests)
+	set(COVERAGE_GCOVR_EXCLUDES "googletest-src/*")
+	SETUP_TARGET_FOR_COVERAGE_GCOVR_HTML(
+			NAME unit_tests_coverage
+			EXECUTABLE run_all_tests
+			DEPENDENCIES fsdb run_all_tests
+	)
 endif()
 
 if(BUILD_BENCHMARKS)
