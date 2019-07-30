@@ -6,7 +6,7 @@ fi
 
 sudo apt-get update -qq
 
-sudo apt-get install -qq g++-9
+sudo apt-get install -qq g++-9 gcovr
 sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90
 
 if [[ "${TARGET_CPU}" == "x86" ]]; then
