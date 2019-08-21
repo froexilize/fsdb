@@ -2,8 +2,8 @@
 #include <filesystem>
 #include "fsdb/fsdb.hpp"
 
-bool load_buffer_from_file(const char *cFileName, unsigned char **buffer, size_t &fileSz) {
-	std::filesystem::path file_path {cFileName};
+bool load_buffer_from_file(std::filesystem::path file_path, unsigned char **buffer, size_t &fileSz) {
+	//std::filesystem::path file_path {cFileName};
 	auto full_path = std::filesystem::canonical(file_path).string();
 	if(FILE *f = fopen(full_path.c_str(), "rb")) {
 		fseek(f,0,SEEK_END);
@@ -130,7 +130,7 @@ bool Fsdb::obtain(std::string_view key, unsigned char **out_buffer) {
 		return false;
 	}
 	size_t sz = 0;
-	return load_buffer_from_file(key_path.c_str(), out_buffer, sz);
+	return load_buffer_from_file(key_path, out_buffer, sz);
 }
 
 bool Fsdb::del(std::string_view key) {
