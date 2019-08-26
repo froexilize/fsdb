@@ -1,19 +1,26 @@
 find_path(
-		FSDB_INLCUDE_DIR
+		FSDB_INCLUDE_DIR
 		NAMES fsdb/fsdb.hpp
-		PATHS /usr/local/include /usr/include ${FSDB_DIR}/include
+		PATHS
+		$ENV{FSDB_DIR}/include
+		${FSDB_DIR}/include
+		${FSDB_DIR}/usr/include
+		${FSDB_DIR}/usr/local/include
+		/usr/local/include
+		/usr/include
 )
-
-message(STATUS "Fsdb dir: ${FSDB_DIR}")
 
 if(FSDB_INCLUDE_DIR)
 	find_library(
 			FSDB_LIBRARY
 			NAMES fsdb
 			PATHS
+				$ENV{FSDB_DIR}/lib
+				${FSDB_DIR}/lib
+				${FSDB_DIR}/usr/lib
+				${FSDB_DIR}/usr/local/lib
 				/usr/local/lib
 				/usr/lib
-				${FSDB_DIR}/lib
 	)
 	if(FSDB_LIBRARY)
 		set(FSDB_LIBRARY_DIR "")
@@ -28,7 +35,7 @@ endif()
 
 if(FSDB_FOUND)
 	if(NOT FSDB_FIND_QUIETLY)
-		message(STATUS "FindFsdb: Found fsdb.h and fsdb-library")
+		message(STATUS "FindFsdb: Found fsdb.hpp and fsdb-library")
 	endif()
 else()
 	if(FSDB_FIND_REQUIRED)
