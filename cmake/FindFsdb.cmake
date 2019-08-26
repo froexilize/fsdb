@@ -39,7 +39,7 @@ if(FSDB_FOUND)
 	endif()
 else()
 	if(FSDB_FIND_REQUIRED)
-		message(FATAL_ERROR "FindFsdb: Could not find fsdb.h and/or fsdb-library")
+		message(FATAL_ERROR "FindFsdb: Could not find fsdb.hpp and/or fsdb-library")
 	endif()
 endif()
 
