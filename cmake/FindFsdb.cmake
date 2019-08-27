@@ -6,8 +6,6 @@ find_path(
 		${FSDB_DIR}/include
 		${FSDB_DIR}/usr/include
 		${FSDB_DIR}/usr/local/include
-		/usr/local/include
-		/usr/include
 )
 
 if(FSDB_INCLUDE_DIR)
@@ -19,8 +17,6 @@ if(FSDB_INCLUDE_DIR)
 				${FSDB_DIR}/lib
 				${FSDB_DIR}/usr/lib
 				${FSDB_DIR}/usr/local/lib
-				/usr/local/lib
-				/usr/lib
 	)
 	if(FSDB_LIBRARY)
 		set(FSDB_LIBRARY_DIR "")
